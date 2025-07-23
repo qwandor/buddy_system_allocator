@@ -92,7 +92,7 @@ impl<const ORDER: usize> Heap<ORDER> {
         while current_start + size_of::<usize>() <= end {
             let lowbit = current_start & (!current_start + 1);
             let mut size = min(lowbit, prev_power_of_two(end - current_start));
-            
+
             // If the order of size is larger than the max order,
             // split it into smaller blocks.
             let mut order = size.trailing_zeros() as usize;
@@ -214,6 +214,12 @@ impl<const ORDER: usize> Heap<ORDER> {
     }
 }
 
+impl<const ORDER: usize> Default for Heap<ORDER> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<const ORDER: usize> fmt::Debug for Heap<ORDER> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("Heap")
@@ -247,6 +253,7 @@ impl<const ORDER: usize> fmt::Debug for Heap<ORDER> {
 /// }
 /// ```
 #[cfg(feature = "use_spin")]
+#[derive(Default)]
 pub struct LockedHeap<const ORDER: usize>(Mutex<Heap<ORDER>>);
 
 #[cfg(feature = "use_spin")]

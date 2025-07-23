@@ -11,7 +11,7 @@ use spin::Mutex;
 
 /// A frame allocator that uses buddy system, requiring a global allocator.
 ///
-/// The max order of the allocator is determined by the const generic parameter `ORDER` (`MAX_ORDER = ORDER - 1`). 
+/// The max order of the allocator is determined by the const generic parameter `ORDER` (`MAX_ORDER = ORDER - 1`).
 /// The frame allocator will only be able to allocate ranges of size up to 2<sup>MAX_ORDER</sup>, out of a total
 /// range of size at most 2<sup>MAX_ORDER + 1</sup> - 1.
 ///
@@ -169,6 +169,12 @@ impl<const ORDER: usize> FrameAllocator<ORDER> {
     }
 }
 
+impl<const ORDER: usize> Default for FrameAllocator<ORDER> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// A locked version of `FrameAllocator`
 ///
 /// # Usage
@@ -187,6 +193,7 @@ impl<const ORDER: usize> FrameAllocator<ORDER> {
 /// assert_eq!(num, Some(0));
 /// ```
 #[cfg(feature = "use_spin")]
+#[derive(Default)]
 pub struct LockedFrameAllocator<const ORDER: usize = 33>(Mutex<FrameAllocator<ORDER>>);
 
 #[cfg(feature = "use_spin")]
